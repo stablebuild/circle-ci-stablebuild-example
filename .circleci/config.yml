@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.14.10
+    environment:
+      PYPI_PIN_DATE: "2026-11-12"
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies from the StableBuild PyPI mirror
+          command: |
+            : "${SB_API_KEY:?Add SB_API_KEY under Project Settings > Environment Variables}"
+            pip install \
+              -i "https://${SB_API_KEY}.pypimirror.stablebuild.com/${PYPI_PIN_DATE}/" \
+              -r requirements.txt -r requirements-dev.txt
+      - run:
+          name: Run tests
+          command: python -m pytest
+
+  build-image:
+    docker:
+      - image: cimg/base:2026.11
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build the image through StableBuild
+          command: |
+            : "${SB_API_KEY:?Add SB_API_KEY under Project Settings > Environment Variables}"
+            docker build --build-arg SB_API_KEY="${SB_API_KEY}" -t circleci-stablebuild-example .
+      - run:
+          name: Smoke test the image
+          command: |
+            docker run -d --name app circleci-stablebuild-example
+            docker exec app curl -fsS --retry 10 --retry-connrefused --retry-delay 1 http://localhost:8000/health
+            docker exec app curl -fsS http://localhost:8000/versions
+
+workflows:
+  build:
+    jobs:
+      - test
+      - build-image:
+          requires:
+            - test
