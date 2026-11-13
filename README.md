@@ -1,6 +1,6 @@
 # StableBuild + CircleCI example
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/stablebuild/circle-ci-stablebuild-example/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/stablebuild/circle-ci-stablebuild-example/tree/master)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/stablebuild/circle-ci-stablebuild-example/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/stablebuild/circle-ci-stablebuild-example/tree/main)
 
 A small Flask app whose CircleCI pipeline downloads every dependency through [StableBuild](https://www.stablebuild.com/).
 A pipeline that runs today and one that runs next year install exactly the same base image, Debian packages, Python packages and files,
